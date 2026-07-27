@@ -297,6 +297,7 @@
       color: var(--text);
       margin: 0 0 0.2rem;
       line-height: 1.35;
+      line-clamp: 1;
       display: -webkit-box;
       -webkit-line-clamp: 1;
       -webkit-box-orient: vertical;
@@ -308,6 +309,7 @@
       color: #64748b;
       margin: 0;
       line-height: 1.45;
+      line-clamp: 3;
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
@@ -542,6 +544,14 @@
       box-shadow: 0 0 0 0.2rem rgba(79, 209, 197, 0.2);
     }
 
+    .field-input:disabled,
+    .field-textarea:disabled {
+      background: #f8fafc;
+      color: #475569;
+      cursor: not-allowed;
+      opacity: 1;
+    }
+
     .field-textarea {
       min-height: 6.5rem;
       resize: vertical;
@@ -553,11 +563,45 @@
       align-items: center;
       justify-content: space-between;
       gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .field-head-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
     }
 
     .char-count {
       font-size: 0.75rem;
       color: var(--text-muted);
+    }
+
+    .copy-trigger {
+      width: 1.85rem;
+      height: 1.85rem;
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 0.45rem;
+      display: inline-grid;
+      place-items: center;
+      color: #64748b;
+      padding: 0;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    .copy-trigger:hover {
+      background: var(--accent-soft);
+      color: var(--accent-text);
+      border-color: var(--accent);
+    }
+
+    .copy-trigger.is-copied {
+      background: var(--accent-soft);
+      color: var(--accent-text);
+      border-color: var(--accent);
     }
 
     .banner-panel {
@@ -724,34 +768,44 @@
                   <div class="fields-row row-3" id="campaign-dates-row-1">
                     <div class="field-group">
                       <label class="field-label" for="campaign-solar-date-1"><i class="bi bi-calendar3" aria-hidden="true"></i> تاریخ شمسی</label>
-                      <input class="field-input" type="text" id="campaign-solar-date-1" value="۱۴۰۴/۰۹/۳۰" />
+                      <input class="field-input" type="text" id="campaign-solar-date-1" value="۱۴۰۴/۰۹/۳۰" disabled />
                     </div>
                     <div class="field-group">
                       <label class="field-label" for="campaign-gregorian-date-1"><i class="bi bi-calendar3" aria-hidden="true"></i> تاریخ میلادی</label>
-                      <input class="field-input" type="text" id="campaign-gregorian-date-1" value="2025-12-21" />
+                      <input class="field-input" type="text" id="campaign-gregorian-date-1" value="2025-12-21" disabled />
                     </div>
                     <div class="field-group">
                       <label class="field-label" for="campaign-occasion-1"><i class="bi bi-stars" aria-hidden="true"></i> مناسبت</label>
-                      <input class="field-input" type="text" id="campaign-occasion-1" value="شب یلدا (طولانی‌ترین شب سال)" />
+                      <input class="field-input" type="text" id="campaign-occasion-1" value="شب یلدا (طولانی‌ترین شب سال)" disabled />
                     </div>
                   </div>
 
                   <div class="field-group" id="campaign-body-group-1">
                     <div class="body-field-head">
                       <label class="field-label" for="campaign-body-1">متن پیام (Body)</label>
-                      <span class="char-count" id="campaign-body-count-1">0/120 کاراکتر</span>
+                      <div class="field-head-actions">
+                        <span class="char-count" id="campaign-body-count-1">0/120 کاراکتر</span>
+                        <button type="button" class="copy-trigger" id="campaign-body-copy-1" data-copy-target="campaign-body-1" aria-label="کپی متن پیام ردیف ۱" title="کپی متن پیام">
+                          <i class="bi bi-copy" aria-hidden="true"></i>
+                        </button>
+                      </div>
                     </div>
-                    <textarea class="field-textarea" id="campaign-body-1" maxlength="120">🍉 شب یلدا نزدیکه! تا ۷۰٪ تخفیف روی همه محصولات. فقط تا پایان امشب فرصت دارید!</textarea>
+                    <textarea class="field-textarea" id="campaign-body-1" maxlength="120" disabled>🍉 شب یلدا نزدیکه! تا ۷۰٪ تخفیف روی همه محصولات. فقط تا پایان امشب فرصت دارید!</textarea>
                   </div>
 
                   <div class="fields-row row-2" id="campaign-cta-row-1">
                     <div class="field-group">
                       <label class="field-label" for="campaign-button-text-1">متن دکمه</label>
-                      <input class="field-input" type="text" id="campaign-button-text-1" value="مشاهده تخفیف‌های داغ" />
+                      <div class="d-flex align-items-center gap-2">
+                        <input class="field-input" type="text" id="campaign-button-text-1" value="مشاهده تخفیف‌های داغ" disabled />
+                        <button type="button" class="copy-trigger flex-shrink-0" id="campaign-button-copy-1" data-copy-target="campaign-button-text-1" aria-label="کپی متن دکمه ردیف ۱" title="کپی متن دکمه">
+                          <i class="bi bi-copy" aria-hidden="true"></i>
+                        </button>
+                      </div>
                     </div>
                     <div class="field-group">
                       <label class="field-label" for="campaign-deeplink-1">لینک مقصد (Deep Link)</label>
-                      <input class="field-input" type="url" id="campaign-deeplink-1" value="https://example.com/yalda" />
+                      <input class="field-input" type="url" id="campaign-deeplink-1" value="https://example.com/yalda" disabled />
                     </div>
                   </div>
                 </div>
@@ -772,6 +826,7 @@
                       type="url"
                       id="campaign-image-url-1"
                       value="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=600&q=80"
+                      disabled
                     />
                   </div>
                 </div>
@@ -809,34 +864,44 @@
                   <div class="fields-row row-3" id="campaign-dates-row-2">
                     <div class="field-group">
                       <label class="field-label" for="campaign-solar-date-2"><i class="bi bi-calendar3" aria-hidden="true"></i> تاریخ شمسی</label>
-                      <input class="field-input" type="text" id="campaign-solar-date-2" value="۱۴۰۶/۰۱/۰۱" />
+                      <input class="field-input" type="text" id="campaign-solar-date-2" value="۱۴۰۶/۰۱/۰۱" disabled />
                     </div>
                     <div class="field-group">
                       <label class="field-label" for="campaign-gregorian-date-2"><i class="bi bi-calendar3" aria-hidden="true"></i> تاریخ میلادی</label>
-                      <input class="field-input" type="text" id="campaign-gregorian-date-2" value="2027-03-21" />
+                      <input class="field-input" type="text" id="campaign-gregorian-date-2" value="2027-03-21" disabled />
                     </div>
                     <div class="field-group">
                       <label class="field-label" for="campaign-occasion-2"><i class="bi bi-stars" aria-hidden="true"></i> مناسبت</label>
-                      <input class="field-input" type="text" id="campaign-occasion-2" value="عید نوروز و آغاز بهار" />
+                      <input class="field-input" type="text" id="campaign-occasion-2" value="عید نوروز و آغاز بهار" disabled />
                     </div>
                   </div>
 
                   <div class="field-group" id="campaign-body-group-2">
                     <div class="body-field-head">
                       <label class="field-label" for="campaign-body-2">متن پیام (Body)</label>
-                      <span class="char-count" id="campaign-body-count-2">0/120 کاراکتر</span>
+                      <div class="field-head-actions">
+                        <span class="char-count" id="campaign-body-count-2">0/120 کاراکتر</span>
+                        <button type="button" class="copy-trigger" id="campaign-body-copy-2" data-copy-target="campaign-body-2" aria-label="کپی متن پیام ردیف ۲" title="کپی متن پیام">
+                          <i class="bi bi-copy" aria-hidden="true"></i>
+                        </button>
+                      </div>
                     </div>
-                    <textarea class="field-textarea" id="campaign-body-2" maxlength="120">🌸 سال نو مبارک! عیدی شما در کیف پولتان شارژ شد. همین حالا اولین خرید سال جدید را انجام دهید.</textarea>
+                    <textarea class="field-textarea" id="campaign-body-2" maxlength="120" disabled>🌸 سال نو مبارک! عیدی شما در کیف پولتان شارژ شد. همین حالا اولین خرید سال جدید را انجام دهید.</textarea>
                   </div>
 
                   <div class="fields-row row-2" id="campaign-cta-row-2">
                     <div class="field-group">
                       <label class="field-label" for="campaign-button-text-2">متن دکمه</label>
-                      <input class="field-input" type="text" id="campaign-button-text-2" value="دریافت عیدی من" />
+                      <div class="d-flex align-items-center gap-2">
+                        <input class="field-input" type="text" id="campaign-button-text-2" value="دریافت عیدی من" disabled />
+                        <button type="button" class="copy-trigger flex-shrink-0" id="campaign-button-copy-2" data-copy-target="campaign-button-text-2" aria-label="کپی متن دکمه ردیف ۲" title="کپی متن دکمه">
+                          <i class="bi bi-copy" aria-hidden="true"></i>
+                        </button>
+                      </div>
                     </div>
                     <div class="field-group">
                       <label class="field-label" for="campaign-deeplink-2">لینک مقصد (Deep Link)</label>
-                      <input class="field-input" type="url" id="campaign-deeplink-2" value="https://example.com/nowruz" />
+                      <input class="field-input" type="url" id="campaign-deeplink-2" value="https://example.com/nowruz" disabled />
                     </div>
                   </div>
                 </div>
@@ -857,6 +922,7 @@
                       type="url"
                       id="campaign-image-url-2"
                       value="https://images.unsplash.com/photo-1485955900006-10f4d32477c2?auto=format&fit=crop&w=600&q=80"
+                      disabled
                     />
                   </div>
                 </div>
@@ -903,6 +969,49 @@
       function truncate(text, max) {
         if (!text) return "";
         return text.length > max ? text.slice(0, max - 1) + "…" : text;
+      }
+
+      function getCopyValue(target) {
+        if (!target) return "";
+        if ("value" in target) return target.value;
+        return target.textContent ? target.textContent.trim() : "";
+      }
+
+      async function copyText(text) {
+        if (!text) return false;
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+
+        const temp = document.createElement("textarea");
+        temp.value = text;
+        temp.setAttribute("readonly", "");
+        temp.style.position = "fixed";
+        temp.style.opacity = "0";
+        document.body.appendChild(temp);
+        temp.select();
+        const success = document.execCommand("copy");
+        document.body.removeChild(temp);
+        return success;
+      }
+
+      function flashCopiedState(button) {
+        if (!button) return;
+        const icon = button.querySelector("i");
+        button.classList.add("is-copied");
+        if (icon) {
+          icon.classList.remove("bi-copy");
+          icon.classList.add("bi-check2");
+        }
+
+        window.setTimeout(() => {
+          button.classList.remove("is-copied");
+          if (icon) {
+            icon.classList.remove("bi-check2");
+            icon.classList.add("bi-copy");
+          }
+        }, 1200);
       }
 
       function getCampaignEls(index) {
@@ -1013,6 +1122,24 @@
           phoneFrame.classList.toggle("is-android", platform === "android");
           phoneFrame.classList.toggle("is-ios", platform === "ios");
         });
+      });
+
+      document.addEventListener("click", async (event) => {
+        const button = event.target.closest("[data-copy-target]");
+        if (!button) return;
+
+        const targetId = button.getAttribute("data-copy-target");
+        const target = document.getElementById(targetId);
+        const text = getCopyValue(target);
+
+        try {
+          const copied = await copyText(text);
+          if (copied) {
+            flashCopiedState(button);
+          }
+        } catch (error) {
+          console.error("Copy failed:", error);
+        }
       });
 
       campaignItems.forEach((item) => bindCampaign(Number(item.dataset.index)));
