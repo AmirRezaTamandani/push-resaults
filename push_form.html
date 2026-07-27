@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>مدیریت پوش نوتیفیکیشن</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --accent: #4fd1c5;
+      --accent-soft: #e0f7f7;
+      --accent-text: #2bb8ab;
+      --border: #e2e8f0;
+      --bg-page: #f7f8fa;
+      --bg-muted: #f1f5f9;
+      --phone-bg: #1a237e;
+      --phone-frame: #1e1e2e;
+      --text: #1e293b;
+      --text-muted: #94a3b8;
+      --radius: 0.75rem;
+      --radius-lg: 1rem;
+      --shadow-sm: 0 0.0625rem 0.1875rem rgba(15, 23, 42, 0.04);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Vazirmatn", sans-serif;
+      background: var(--bg-page);
+      color: var(--text);
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    .page-wrap {
+      width: min(100% - 2rem, 75rem);
+      margin-inline: auto;
+      padding-block: 1.5rem;
+    }
+
+    .main-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      align-items: start;
+      /* Keep visual LTR column order (preview left, campaigns right) while page stays RTL */
+      direction: ltr;
+    }
+
+    .main-row > * {
+      direction: rtl;
+    }
+
+    @media (min-width: 992px) {
+      .main-row {
+        grid-template-columns: minmax(0, 0.38fr) minmax(0, 0.62fr);
+      }
+    }
+
+    /* ---------- Preview card ---------- */
+    .preview-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.125rem 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .preview-title {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .preview-title i {
+      color: var(--accent-text);
+      font-size: 1.1rem;
+    }
+
+    .preview-row-badge {
+      background: var(--accent-soft);
+      color: var(--accent-text);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.3rem 0.65rem;
+      border-radius: 0.5rem;
+      white-space: nowrap;
+    }
+
+    .platform-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.25rem;
+      background: var(--bg-muted);
+      border-radius: 999px;
+      padding: 0.25rem;
+      width: fit-content;
+      max-width: 100%;
+      margin-inline: auto;
+      margin-bottom: 1rem;
+    }
+
+    .platform-tab {
+      border: none;
+      background: transparent;
+      color: #64748b;
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .platform-tab.active {
+      background: #fff;
+      color: var(--accent-text);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .phone-stage {
+      background: var(--bg-muted);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .phone-frame {
+      width: min(72%, 14rem);
+      aspect-ratio: 9 / 19;
+      background: var(--phone-frame);
+      border-radius: clamp(1.25rem, 8%, 2rem);
+      padding: 0.55rem;
+      position: relative;
+      box-shadow: 0 0.5rem 1.5rem rgba(15, 23, 42, 0.18);
+      transition: border-radius 0.2s;
+    }
+
+    .phone-frame.is-android {
+      border-radius: clamp(0.75rem, 5%, 1.25rem);
+    }
+
+    .phone-frame.is-android .phone-notch {
+      width: 28%;
+      height: 2.2%;
+      top: 1.8%;
+      border-radius: 0.25rem;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #24308f 0%, var(--phone-bg) 55%, #12185a 100%);
+      border-radius: inherit;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 6% 5% 8%;
+    }
+
+    .phone-notch {
+      position: absolute;
+      top: 2.5%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 34%;
+      height: 3.2%;
+      background: #0a0a12;
+      border-radius: 999px;
+      z-index: 3;
+    }
+
+    .status-bar {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+      font-size: clamp(0.55rem, 2.4vw, 0.65rem);
+      margin-top: 4%;
+      margin-bottom: 8%;
+      opacity: 0.9;
+      z-index: 2;
+    }
+
+    .status-bar-icons {
+      display: flex;
+      gap: 0.2rem;
+      align-items: center;
+    }
+
+    .lock-date {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 8%;
+    }
+
+    .lock-date-label {
+      font-size: clamp(0.6rem, 2.6vw, 0.7rem);
+      opacity: 0.85;
+      margin: 0;
+    }
+
+    .lock-date-value {
+      font-size: clamp(0.85rem, 3.6vw, 1.05rem);
+      font-weight: 700;
+      margin: 0.15rem 0 0;
+    }
+
+    .notif-card {
+      width: 100%;
+      background: #fff;
+      border-radius: 0.75rem;
+      padding: 0.55rem 0.6rem 0.65rem;
+      box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.15);
+    }
+
+    .notif-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.35rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .notif-app {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      min-width: 0;
+    }
+
+    .notif-app-icon {
+      width: 1rem;
+      height: 1rem;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 0.55rem;
+      flex-shrink: 0;
+    }
+
+    .notif-app-name {
+      font-size: clamp(0.55rem, 2.3vw, 0.65rem);
+      font-weight: 600;
+      color: #334155;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .notif-time {
+      font-size: clamp(0.5rem, 2.1vw, 0.6rem);
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .notif-body {
+      display: flex;
+      gap: 0.4rem;
+      align-items: flex-start;
+    }
+
+    .notif-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .notif-title {
+      font-size: clamp(0.58rem, 2.4vw, 0.7rem);
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 0.2rem;
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .notif-message {
+      font-size: clamp(0.5rem, 2.1vw, 0.6rem);
+      color: #64748b;
+      margin: 0;
+      line-height: 1.45;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .notif-thumb {
+      width: 22%;
+      aspect-ratio: 1;
+      border-radius: 0.35rem;
+      object-fit: cover;
+      background: var(--bg-muted);
+      flex-shrink: 0;
+    }
+
+    .notif-cta {
+      display: block;
+      width: 100%;
+      margin-top: 0.5rem;
+      border: none;
+      background: var(--accent-soft);
+      color: var(--accent-text);
+      font-family: inherit;
+      font-size: clamp(0.52rem, 2.2vw, 0.62rem);
+      font-weight: 600;
+      padding: 0.4rem 0.5rem;
+      border-radius: 0.45rem;
+      text-align: center;
+      cursor: default;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .home-indicator {
+      position: absolute;
+      bottom: 2.5%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 36%;
+      height: 0.28rem;
+      background: rgba(255, 255, 255, 0.35);
+      border-radius: 999px;
+    }
+
+    /* ---------- Campaign accordion ---------- */
+    .campaigns-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .campaign-item {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .campaign-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .campaign-header-main {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .campaign-badge {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent-text);
+      font-weight: 700;
+      font-size: 1rem;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .campaign-meta {
+      min-width: 0;
+    }
+
+    .campaign-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .campaign-subtitle {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin: 0.15rem 0 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .campaign-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-shrink: 0;
+    }
+
+    .campaign-action-btn {
+      width: 1.85rem;
+      height: 1.85rem;
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 0.45rem;
+      display: grid;
+      place-items: center;
+      color: #64748b;
+      padding: 0;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    .campaign-action-btn:hover {
+      background: var(--accent-soft);
+      color: var(--accent-text);
+      border-color: var(--accent);
+    }
+
+    .campaign-action-btn.is-active {
+      background: var(--accent-soft);
+      color: var(--accent-text);
+      border-color: var(--accent);
+    }
+
+    .campaign-chevron {
+      transition: transform 0.2s;
+    }
+
+    .campaign-item:not(.is-open) .campaign-chevron {
+      transform: rotate(180deg);
+    }
+
+    .campaign-body {
+      border-top: 1px solid var(--border);
+      padding: 1rem;
+    }
+
+    .campaign-form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      .campaign-form-grid {
+        grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.85fr);
+      }
+    }
+
+    .form-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .fields-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    @media (min-width: 576px) {
+      .fields-row.row-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .fields-row.row-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .field-label {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #64748b;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .field-label i {
+      color: var(--accent-text);
+      font-size: 0.85rem;
+    }
+
+    .field-input,
+    .field-textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 0.6rem;
+      background: #fff;
+      padding: 0.55rem 0.75rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .field-input:focus,
+    .field-textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 0.2rem rgba(79, 209, 197, 0.2);
+    }
+
+    .field-textarea {
+      min-height: 6.5rem;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .body-field-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .char-count {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .banner-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .banner-preview-box {
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--bg-muted);
+      aspect-ratio: 4 / 3;
+    }
+
+    .banner-preview-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ---------- Tip banner ---------- */
+    .tip-banner {
+      margin-top: 1.25rem;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 0.9rem 1.1rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .tip-icon {
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 50%;
+      background: #fff7e6;
+      color: #f59e0b;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      font-size: 0.95rem;
+    }
+
+    .tip-content {
+      min-width: 0;
+    }
+
+    .tip-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin: 0 0 0.2rem;
+      display: inline;
+    }
+
+    .tip-text {
+      font-size: 0.82rem;
+      color: #64748b;
+      margin: 0;
+      line-height: 1.7;
+      display: inline;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrap" id="page-wrap">
+    <div class="main-row" id="main-row">
+      <!-- Live mobile preview (visual left on desktop) -->
+      <aside class="preview-card" id="preview-card">
+        <div class="preview-header" id="preview-header">
+          <h2 class="preview-title" id="preview-heading">
+            <i class="bi bi-phone" aria-hidden="true"></i>
+            پیش‌نمایش زنده در موبایل
+          </h2>
+          <span class="preview-row-badge" id="preview-row-badge">ردیف ۱</span>
+        </div>
+
+        <div class="platform-tabs" id="platform-tabs" role="tablist">
+          <button type="button" class="platform-tab active" id="tab-android" role="tab" aria-selected="true" data-platform="android">
+            اندروید
+          </button>
+          <button type="button" class="platform-tab" id="tab-ios" role="tab" aria-selected="false" data-platform="ios">
+            iOS (آیفون)
+          </button>
+        </div>
+
+        <div class="phone-stage" id="phone-stage">
+          <div class="phone-frame is-android" id="phone-frame">
+            <div class="phone-notch" id="phone-notch" aria-hidden="true"></div>
+            <div class="phone-screen" id="phone-screen">
+              <div class="status-bar" id="status-bar">
+                <span class="status-bar-icons" id="status-icons">
+                  <i class="bi bi-reception-4" aria-hidden="true"></i>
+                  <i class="bi bi-wifi" aria-hidden="true"></i>
+                </span>
+                <span id="status-time">۰۹:۴۰</span>
+              </div>
+
+              <div class="lock-date" id="lock-date">
+                <p class="lock-date-label" id="lock-date-label">امروز</p>
+                <p class="lock-date-value" id="lock-date-value">دوشنبه ۵ مرداد</p>
+              </div>
+
+              <div class="notif-card" id="notif-card">
+                <div class="notif-header" id="notif-header">
+                  <div class="notif-app">
+                    <span class="notif-app-icon" id="preview-app-icon"><i class="bi bi-bell-fill" aria-hidden="true"></i></span>
+                    <span class="notif-app-name" id="preview-app-name">اپلیکیشن شما</span>
+                  </div>
+                  <span class="notif-time" id="preview-time-label">الان</span>
+                </div>
+                <div class="notif-body" id="notif-body">
+                  <div class="notif-text">
+                    <p class="notif-title" id="preview-title">جشنواره تخفیف‌های یلدایی شگ...</p>
+                    <p class="notif-message" id="preview-body">🍉 شب یلدا نزدیکه! تا ۷۰٪ تخفیف روی همه محصولات. فقط تا پایان امشب فرصت دارید!</p>
+                  </div>
+                  <img
+                    class="notif-thumb"
+                    id="preview-image"
+                    src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=200&q=80"
+                    alt="پیش‌نمایش تصویر"
+                  />
+                </div>
+                <button type="button" class="notif-cta" id="preview-button">مشاهده تخفیف‌های داغ</button>
+              </div>
+
+              <div class="home-indicator" id="home-indicator" aria-hidden="true"></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Campaign accordion (visual right on desktop) -->
+      <section class="campaigns-stack" id="campaigns-stack">
+        <!-- Campaign 1 -->
+        <article class="campaign-item" id="campaign-item-1" data-index="1">
+          <div class="campaign-header" id="campaign-header-1" role="button" tabindex="0" aria-expanded="false" aria-controls="campaign-collapse-1">
+            <div class="campaign-header-main">
+              <span class="campaign-badge" id="campaign-badge-1">1</span>
+              <div class="campaign-meta">
+                <h3 class="campaign-title" id="campaign-title-1">جشنواره تخفیف‌های یلدایی شگفت‌انگیز</h3>
+                <p class="campaign-subtitle" id="campaign-subtitle-1">شب یلدا (طولانی‌ترین شب سال)</p>
+              </div>
+            </div>
+            <div class="campaign-actions" id="campaign-actions-1">
+              <button type="button" class="campaign-action-btn is-active" id="campaign-eye-1" title="پیش‌نمایش" aria-label="پیش‌نمایش ردیف ۱">
+                <i class="bi bi-eye" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="campaign-action-btn" id="campaign-menu-1" title="گزینه‌ها" aria-label="گزینه‌های بیشتر">
+                <i class="bi bi-three-dots-vertical" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="campaign-action-btn" id="campaign-toggle-1" title="باز و بسته کردن" aria-label="باز و بسته کردن">
+                <i class="bi bi-chevron-up campaign-chevron" id="campaign-chevron-1" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+          <div class="collapse" id="campaign-collapse-1">
+            <div class="campaign-body" id="campaign-body-wrap-1">
+              <div class="campaign-form-grid" id="campaign-form-grid-1">
+                <div class="form-fields" id="campaign-fields-1">
+                  <div class="fields-row row-3" id="campaign-dates-row-1">
+                    <div class="field-group">
+                      <label class="field-label" for="campaign-solar-date-1"><i class="bi bi-calendar3" aria-hidden="true"></i> تاریخ شمسی</label>
+                      <input class="field-input" type="text" id="campaign-solar-date-1" value="۱۴۰۴/۰۹/۳۰" />
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label" for="campaign-gregorian-date-1"><i class="bi bi-calendar3" aria-hidden="true"></i> تاریخ میلادی</label>
+                      <input class="field-input" type="text" id="campaign-gregorian-date-1" value="2025-12-21" />
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label" for="campaign-occasion-1"><i class="bi bi-stars" aria-hidden="true"></i> مناسبت</label>
+                      <input class="field-input" type="text" id="campaign-occasion-1" value="شب یلدا (طولانی‌ترین شب سال)" />
+                    </div>
+                  </div>
+
+                  <div class="field-group" id="campaign-body-group-1">
+                    <div class="body-field-head">
+                      <label class="field-label" for="campaign-body-1">متن پیام (Body)</label>
+                      <span class="char-count" id="campaign-body-count-1">0/120 کاراکتر</span>
+                    </div>
+                    <textarea class="field-textarea" id="campaign-body-1" maxlength="120">🍉 شب یلدا نزدیکه! تا ۷۰٪ تخفیف روی همه محصولات. فقط تا پایان امشب فرصت دارید!</textarea>
+                  </div>
+
+                  <div class="fields-row row-2" id="campaign-cta-row-1">
+                    <div class="field-group">
+                      <label class="field-label" for="campaign-button-text-1">متن دکمه</label>
+                      <input class="field-input" type="text" id="campaign-button-text-1" value="مشاهده تخفیف‌های داغ" />
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label" for="campaign-deeplink-1">لینک مقصد (Deep Link)</label>
+                      <input class="field-input" type="url" id="campaign-deeplink-1" value="https://example.com/yalda" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="banner-panel" id="campaign-banner-panel-1">
+                  <label class="field-label" for="campaign-image-url-1">پیش‌نمایش تصویر بنر</label>
+                  <div class="banner-preview-box" id="campaign-banner-box-1">
+                    <img
+                      id="campaign-banner-preview-1"
+                      src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=600&q=80"
+                      alt="پیش‌نمایش بنر ۱"
+                    />
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label" for="campaign-image-url-1">لینک مستقیم تصویر</label>
+                    <input
+                      class="field-input"
+                      type="url"
+                      id="campaign-image-url-1"
+                      value="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=600&q=80"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Campaign 2 -->
+        <article class="campaign-item is-open" id="campaign-item-2" data-index="2">
+          <div class="campaign-header" id="campaign-header-2" role="button" tabindex="0" aria-expanded="true" aria-controls="campaign-collapse-2">
+            <div class="campaign-header-main">
+              <span class="campaign-badge" id="campaign-badge-2">2</span>
+              <div class="campaign-meta">
+                <h3 class="campaign-title" id="campaign-title-2">کمپین عیدی نوروز باستانی</h3>
+                <p class="campaign-subtitle" id="campaign-subtitle-2">عید نوروز و آغاز بهار</p>
+              </div>
+            </div>
+            <div class="campaign-actions" id="campaign-actions-2">
+              <button type="button" class="campaign-action-btn" id="campaign-eye-2" title="پیش‌نمایش" aria-label="پیش‌نمایش ردیف ۲">
+                <i class="bi bi-eye" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="campaign-action-btn" id="campaign-menu-2" title="گزینه‌ها" aria-label="گزینه‌های بیشتر">
+                <i class="bi bi-three-dots-vertical" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="campaign-action-btn" id="campaign-toggle-2" title="باز و بسته کردن" aria-label="باز و بسته کردن">
+                <i class="bi bi-chevron-up campaign-chevron" id="campaign-chevron-2" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+          <div class="collapse show" id="campaign-collapse-2">
+            <div class="campaign-body" id="campaign-body-wrap-2">
+              <div class="campaign-form-grid" id="campaign-form-grid-2">
+                <div class="form-fields" id="campaign-fields-2">
+                  <div class="fields-row row-3" id="campaign-dates-row-2">
+                    <div class="field-group">
+                      <label class="field-label" for="campaign-solar-date-2"><i class="bi bi-calendar3" aria-hidden="true"></i> تاریخ شمسی</label>
+                      <input class="field-input" type="text" id="campaign-solar-date-2" value="۱۴۰۶/۰۱/۰۱" />
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label" for="campaign-gregorian-date-2"><i class="bi bi-calendar3" aria-hidden="true"></i> تاریخ میلادی</label>
+                      <input class="field-input" type="text" id="campaign-gregorian-date-2" value="2027-03-21" />
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label" for="campaign-occasion-2"><i class="bi bi-stars" aria-hidden="true"></i> مناسبت</label>
+                      <input class="field-input" type="text" id="campaign-occasion-2" value="عید نوروز و آغاز بهار" />
+                    </div>
+                  </div>
+
+                  <div class="field-group" id="campaign-body-group-2">
+                    <div class="body-field-head">
+                      <label class="field-label" for="campaign-body-2">متن پیام (Body)</label>
+                      <span class="char-count" id="campaign-body-count-2">0/120 کاراکتر</span>
+                    </div>
+                    <textarea class="field-textarea" id="campaign-body-2" maxlength="120">🌸 سال نو مبارک! عیدی شما در کیف پولتان شارژ شد. همین حالا اولین خرید سال جدید را انجام دهید.</textarea>
+                  </div>
+
+                  <div class="fields-row row-2" id="campaign-cta-row-2">
+                    <div class="field-group">
+                      <label class="field-label" for="campaign-button-text-2">متن دکمه</label>
+                      <input class="field-input" type="text" id="campaign-button-text-2" value="دریافت عیدی من" />
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label" for="campaign-deeplink-2">لینک مقصد (Deep Link)</label>
+                      <input class="field-input" type="url" id="campaign-deeplink-2" value="https://example.com/nowruz" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="banner-panel" id="campaign-banner-panel-2">
+                  <label class="field-label" for="campaign-image-url-2">پیش‌نمایش تصویر بنر</label>
+                  <div class="banner-preview-box" id="campaign-banner-box-2">
+                    <img
+                      id="campaign-banner-preview-2"
+                      src="https://images.unsplash.com/photo-1485955900006-10f4d32477c2?auto=format&fit=crop&w=600&q=80"
+                      alt="پیش‌نمایش بنر ۲"
+                    />
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label" for="campaign-image-url-2">لینک مستقیم تصویر</label>
+                    <input
+                      class="field-input"
+                      type="url"
+                      id="campaign-image-url-2"
+                      value="https://images.unsplash.com/photo-1485955900006-10f4d32477c2?auto=format&fit=crop&w=600&q=80"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+    </div>
+
+    <aside class="tip-banner" id="tip-banner">
+      <span class="tip-icon" id="tip-icon" aria-hidden="true"><i class="bi bi-lightbulb-fill"></i></span>
+      <div class="tip-content" id="tip-content">
+        <h4 class="tip-title" id="tip-title">نکته طلایی بازاریابی:</h4>
+        <p class="tip-text" id="tip-text">
+          استفاده از دکمه‌های هیجان‌انگیز مثل «مشاهده تخفیف‌های داغ» می‌تواند نرخ کلیک (CTR) را تا ۴۲٪ افزایش دهد. از دکمه‌های خسته‌کننده مثل «بیشتر بدانید» اجتناب کنید!
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function () {
+      const MAX_BODY = 120;
+      let activeIndex = 1;
+
+      const preview = {
+        badge: document.getElementById("preview-row-badge"),
+        title: document.getElementById("preview-title"),
+        body: document.getElementById("preview-body"),
+        image: document.getElementById("preview-image"),
+        button: document.getElementById("preview-button"),
+      };
+
+      const phoneFrame = document.getElementById("phone-frame");
+      const platformTabs = document.querySelectorAll(".platform-tab");
+      const campaignItems = document.querySelectorAll(".campaign-item");
+
+      function toPersianDigits(value) {
+        return String(value).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[d]);
+      }
+
+      function truncate(text, max) {
+        if (!text) return "";
+        return text.length > max ? text.slice(0, max - 1) + "…" : text;
+      }
+
+      function getCampaignEls(index) {
+        return {
+          item: document.getElementById("campaign-item-" + index),
+          title: document.getElementById("campaign-title-" + index),
+          body: document.getElementById("campaign-body-" + index),
+          bodyCount: document.getElementById("campaign-body-count-" + index),
+          buttonText: document.getElementById("campaign-button-text-" + index),
+          imageUrl: document.getElementById("campaign-image-url-" + index),
+          bannerPreview: document.getElementById("campaign-banner-preview-" + index),
+          eye: document.getElementById("campaign-eye-" + index),
+          collapse: document.getElementById("campaign-collapse-" + index),
+          header: document.getElementById("campaign-header-" + index),
+        };
+      }
+
+      function updateCharCount(index) {
+        const els = getCampaignEls(index);
+        if (!els.body || !els.bodyCount) return;
+        const len = els.body.value.length;
+        els.bodyCount.textContent = toPersianDigits(len) + "/" + toPersianDigits(MAX_BODY) + " کاراکتر";
+      }
+
+      function syncPreviewFrom(index) {
+        const els = getCampaignEls(index);
+        if (!els.title) return;
+
+        activeIndex = index;
+        preview.badge.textContent = "ردیف " + toPersianDigits(index);
+        preview.title.textContent = truncate(els.title.textContent.trim(), 28);
+        preview.body.textContent = els.body.value;
+        preview.button.textContent = els.buttonText.value || "مشاهده";
+        if (els.imageUrl.value) {
+          preview.image.src = els.imageUrl.value;
+        }
+
+        campaignItems.forEach((item) => {
+          const i = item.dataset.index;
+          const eye = document.getElementById("campaign-eye-" + i);
+          if (eye) eye.classList.toggle("is-active", Number(i) === Number(index));
+        });
+      }
+
+      function bindCampaign(index) {
+        const els = getCampaignEls(index);
+        if (!els.item) return;
+
+        const collapse = new bootstrap.Collapse(els.collapse, { toggle: false });
+
+        els.header.addEventListener("click", (e) => {
+          if (e.target.closest("#campaign-eye-" + index) || e.target.closest("#campaign-menu-" + index)) return;
+          collapse.toggle();
+        });
+
+        els.header.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            if (e.target.closest("#campaign-eye-" + index) || e.target.closest("#campaign-menu-" + index)) return;
+            collapse.toggle();
+          }
+        });
+
+        els.collapse.addEventListener("show.bs.collapse", () => {
+          els.item.classList.add("is-open");
+          els.header.setAttribute("aria-expanded", "true");
+        });
+
+        els.collapse.addEventListener("hide.bs.collapse", () => {
+          els.item.classList.remove("is-open");
+          els.header.setAttribute("aria-expanded", "false");
+        });
+
+        els.eye.addEventListener("click", (e) => {
+          e.stopPropagation();
+          syncPreviewFrom(index);
+        });
+
+        els.body.addEventListener("input", () => {
+          updateCharCount(index);
+          if (activeIndex === index) syncPreviewFrom(index);
+        });
+
+        els.buttonText.addEventListener("input", () => {
+          if (activeIndex === index) syncPreviewFrom(index);
+        });
+
+        els.imageUrl.addEventListener("input", () => {
+          if (els.imageUrl.value) {
+            els.bannerPreview.src = els.imageUrl.value;
+          }
+          if (activeIndex === index) syncPreviewFrom(index);
+        });
+
+        updateCharCount(index);
+      }
+
+      platformTabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          platformTabs.forEach((t) => {
+            t.classList.remove("active");
+            t.setAttribute("aria-selected", "false");
+          });
+          tab.classList.add("active");
+          tab.setAttribute("aria-selected", "true");
+
+          const platform = tab.dataset.platform;
+          phoneFrame.classList.toggle("is-android", platform === "android");
+          phoneFrame.classList.toggle("is-ios", platform === "ios");
+        });
+      });
+
+      campaignItems.forEach((item) => bindCampaign(Number(item.dataset.index)));
+      syncPreviewFrom(1);
+    })();
+  </script>
+</body>
+</html>
